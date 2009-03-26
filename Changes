@@ -1,0 +1,44 @@
+Revision history for Path-Extended
+
+0.10 2009/03/08
+  - fixed a compatibility test which may break under some environment
+  - better pod coverage
+  - reorganized a bit and added "basename" to dir (cf. RT #17312)
+  - better subclassing
+  - forgot to close a directory after ->children, and before ->rmdir
+
+0.09 2009/03/06
+  - "mtime" option of "save" didn't work well.
+
+0.08 2009/03/05
+  - fixed relative/absolute path issue
+
+0.07 2009/03/05
+  - reorganized some methods and added compatible "recurse"
+    and incompatible "new_foreign" methods.
+
+0.06 2009/03/04
+  - parent was broken
+
+0.05 2009/03/04
+  - removed trash
+
+0.04 2009/03/04
+  - logging part is replaced with a Log::Dump module.
+  - some pod fixes
+  - added "grep" method to ::File.
+  - added Path::Extended::Class for better compatibility
+
+0.03 2008/10/27
+  - now Path::Extended::Dir ignores only dot files/directories
+    under the target directory while looking for something.
+    (i.e. don't care if they are under .cpan directory)
+
+0.02 2008/10/26
+  - requires IO 1.27 to support "say"
+  - dir->seek isn't always zero
+  - loosened dir->find(_dir) tests which look like
+    a bit too strict
+
+0.01 2008/10/23
+  - initial release
