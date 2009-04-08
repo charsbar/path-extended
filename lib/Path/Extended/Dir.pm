@@ -118,7 +118,7 @@ sub _find {
 
   require File::Find::Rule;
 
-  my @items = grep { $_->relative !~ m{/\.} }
+  my @items = grep { $_->relative($self->absolute) !~ m{/\.} }
               map  { $self->_related( $type, $_ ) }
               File::Find::Rule->$type->name($rule)->in($self->absolute);
 
