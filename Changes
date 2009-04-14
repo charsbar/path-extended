@@ -1,5 +1,9 @@
 Revision history for Path-Extended
 
+0.11 2009/04/14
+  - "find(_dir)" methods did not return items sometimes as relative
+    path may contain "../"
+
 0.10 2009/03/08
   - fixed a compatibility test which may break under some environment
   - better pod coverage
