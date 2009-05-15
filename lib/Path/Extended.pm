@@ -4,27 +4,48 @@ use strict;
 use warnings;
 use Sub::Install;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 sub import {
   my ($class, @imports) = @_;
 
   my $caller = caller;
 
-  @imports = qw( file dir ) unless @imports;
-  foreach my $import (@imports) {
-    next unless $import =~ /^(?:file|dir)$/;
-    my $target = $class.'::'.ucfirst($import);
-    eval "require $target" or die $@;
+  my $file_class = $class.'::File';
+  my $dir_class  = $class.'::Dir';
+  eval "require $file_class" or die $@;
+  eval "require $dir_class"  or die $@;
+
+  my %map = (
+    file        => sub { $file_class->new(@_) },
+    dir         => sub { $dir_class->new(@_)  },
+    file_or_dir => sub {
+      my @args = @_;
+      my $file = $file_class->new(@args);
+      return $dir_class->new(@args) if -d $file->absolute;
+      return $file;
+    },
+    dir_or_file => sub {
+      my @args = @_;
+      my $dir = $dir_class->new(@args);
+      return $file_class->new(@args) if -f $dir->absolute;
+      return $dir;
+    },
+  );
+
+  @imports = qw( file dir file_or_dir dir_or_file ) unless @imports;
+  foreach my $name (@imports) {
+    next unless $map{$name};
+
     Sub::Install::install_sub({
-      as   => $import,
+      as   => $name,
       into => $caller,
-      code => sub { $target->new(@_) },
+      code => $map{$name},
     });
     Sub::Install::reinstall_sub({
-      as   => $import,
+      as   => $name,
       into => $class,
-      code => sub { $target->new(@_) },
+      code => $map{$name},
     });
   }
 }
@@ -40,8 +61,11 @@ Path::Extended - yet another Path class
 =head1 SYNOPSIS
 
     use Path::Extended;
-    my $file = file('path/to/file.txt');
-    my $dir  = dir('path/to/somewhere');
+    my $file   = file('path/to/file.txt');
+    my $dir    = dir('path/to/somewhere');
+    
+    my $maybe_file = file_or_dir('path/to/file_or_dir');
+    my $maybe_dir  = dir_or_file('path/to/file_or_dir');
 
 =head1 DESCRIPTION
 
@@ -59,15 +83,23 @@ L<Path::Extended> always holds an absolute path of a file/directory internally, 
 
 =head1 FUNCTIONS
 
-Both of these two functions are exported by default.
+All of these four functions are exported by default.
 
 =head2 file
 
-takes a file name and returns a L<Path::Extended::File> object. The file doesn't need to exist.
+takes a file path and returns a L<Path::Extended::File> object. The file doesn't need to exist.
 
 =head2 dir
 
-takes a directory name and returns a L<Path::Extended::Dir> object. The directory doesn't need to exist.
+takes a directory path and returns a L<Path::Extended::Dir> object. The directory doesn't need to exist.
+
+=head2 file_or_dir
+
+takes a file/directory path and returns a L<Path::Extended::File> object if it doesn't point to an existing directory (if it does point to a directory, it returns a L<Path::Extended::Dir> object). This is handy if you don't know a path is a file or a directory. You can tell which is the case by calling ->is_dir method (if it's a file, ->is_dir returns false, otherwise true).
+
+=head2 dir_or_file
+
+does the same above but L<Path::Extended::Dir> has precedence.
 
 =head1 KNOWN LIMITATIONS
 

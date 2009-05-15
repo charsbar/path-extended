@@ -24,15 +24,15 @@ If you want some functionality of L<Path::Extended> but also want more L<Path::C
 
 =head1 FUNCTIONS
 
-Both of these two functions are exported by default.
+Both of these two functions are exported by default. As of 0.12, additional C<file_or_dir> and C<dir_or_file> functions are exported as well. See L<Path::Extended> for their details.
 
 =head2 file
 
-takes a file name and returns a L<Path::Extended::Class::File> object. The file doesn't need to exist.
+takes a file path and returns a L<Path::Extended::Class::File> object. The file doesn't need to exist.
 
 =head2 dir
 
-takes a directory name and returns a L<Path::Extended::Class::Dir> object. The directory doesn't need to exist.
+takes a directory path and returns a L<Path::Extended::Class::Dir> object. The directory doesn't need to exist.
 
 =head1 AUTHOR
 
