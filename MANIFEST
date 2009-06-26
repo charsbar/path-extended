@@ -28,6 +28,7 @@ t/lib/Path/Extended/Test/Dir/Find.pm
 t/lib/Path/Extended/Test/Dir/Mkdir.pm
 t/lib/Path/Extended/Test/Dir/Next.pm
 t/lib/Path/Extended/Test/Dir/Path.pm
+t/lib/Path/Extended/Test/Dir/Prune.pm
 t/lib/Path/Extended/Test/Dir/Recurse.pm
 t/lib/Path/Extended/Test/Dir/Seek.pm
 t/lib/Path/Extended/Test/Entity/Log.pm
