@@ -11,6 +11,7 @@ MANIFEST			This list of files
 README
 t/00_load.t
 t/10_entity.t
+t/15_file_or_dir.t
 t/20_file.t
 t/30_directory.t
 t/40_compatibility.t
@@ -27,6 +28,7 @@ t/lib/Path/Extended/Test/Dir/Find.pm
 t/lib/Path/Extended/Test/Dir/Mkdir.pm
 t/lib/Path/Extended/Test/Dir/Next.pm
 t/lib/Path/Extended/Test/Dir/Path.pm
+t/lib/Path/Extended/Test/Dir/Recurse.pm
 t/lib/Path/Extended/Test/Dir/Seek.pm
 t/lib/Path/Extended/Test/Entity/Log.pm
 t/lib/Path/Extended/Test/File.pm
@@ -37,6 +39,8 @@ t/lib/Path/Extended/Test/File/Path.pm
 t/lib/Path/Extended/Test/File/Read.pm
 t/lib/Path/Extended/Test/File/Slurp.pm
 t/lib/Path/Extended/Test/File/Stat.pm
+t/lib/Path/Extended/Test/FileOrDir/Basic.pm
 t/lib/Path/Extended/Test/Subclass/Dir.pm
 t/lib/Path/Extended/Test/Subclass/File.pm
+t/lib/Path/Extended/Test/Subclass/FileOrDir.pm
 t/lib/Path/Extended/Test/Subclass/Import.pm
