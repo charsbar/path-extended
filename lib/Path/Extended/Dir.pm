@@ -205,7 +205,7 @@ sub children {
   return @children;
 }
 
-sub recurse { # ripped from Path::Class::Dir
+sub recurse { # adapted from Path::Class::Dir
   my $self = shift;
   my %opts = (preorder => 1, depthfirst => 0, prune => 1, @_);
 
@@ -316,6 +316,8 @@ returns a L<Path::Extended::Dir> or L<Path::Extended::File> object while iterati
 
 returns a list of L<Path::Extended::Class::File> and/or L<Path::Extended::Class::Dir> objects listed in the directory. See L<Path::Class::Dir> for details.
 
+As of 0.13, this may take a C<prune> option to exclude some of the children. See below for details.
+
 =head2 file, subdir
 
 returns a child L<Path::Extended::Class::File>/L<Path::Extended::Class::Dir> object in the directory.
@@ -338,6 +340,28 @@ a code reference to call for each entry.
 =item depthfirst, preorder
 
 flags to change the order of processing.
+
+=item prune
+
+As of 0.13, you can use this option to prune some of the directory tree. You can provide a regular expression, a code reference, or a boolean value:
+
+  # all the dot files/directories will be pruned (current default)
+  $dir->recurse( prune => 1, callback => sub { ... });
+
+  # nothing will be pruned (previous default)
+  $dir->recurse( prune => 0, callback => sub { ... });
+
+  # files/directories whose "basename" has a ".bak" suffix
+  # will be pruned
+  $dir->recurse( prune => qr/\.bak$/, callback => sub { ... });
+
+  # ditto
+  $dir->recurse( prune => \&prune, callback => sub { ... });
+
+  sub prune {
+    my $entry = shift;
+    return $entry->basename =~ /\.bak$/ ? 1 : 0;
+  }
 
 =back
 
