@@ -187,7 +187,19 @@ sub children {
     next if (!$options{all} && ( $entry eq '.' || $entry eq '..' ));
     my $type = ( -d File::Spec->catdir($self->absolute, $entry) )
                ? 'dir' : 'file';
-    push @children, $self->_related( $type => $entry );
+    my $child = $self->_related( $type => $entry );
+    if ($options{prune}) {
+      if (ref $options{prune} eq 'Regexp') {
+        next if $entry =~ /$options{prune}/;
+      }
+      elsif (ref $options{prune} eq 'CODE') {
+        next if $options{prune}->($child);
+      }
+      else {
+        next if $entry =~ /^\./;
+      }
+    }
+    push @children, $child;
   }
   $self->close;
   return @children;
@@ -195,7 +207,7 @@ sub children {
 
 sub recurse { # ripped from Path::Class::Dir
   my $self = shift;
-  my %opts = (preorder => 1, depthfirst => 0, @_);
+  my %opts = (preorder => 1, depthfirst => 0, prune => 1, @_);
 
   my $callback = $opts{callback}
     or Carp::croak "Must provide a 'callback' parameter to recurse()";
@@ -208,17 +220,17 @@ sub recurse { # ripped from Path::Class::Dir
     ? sub {
       my $dir = shift;
       $callback->($dir);
-      unshift @queue, $dir->children;
+      unshift @queue, $dir->children( prune => $opts{prune} );
     }
     : $opts{preorder}
     ? sub {
       my $dir = shift;
       $callback->($dir);
-      push @queue, $dir->children;
+      push @queue, $dir->children( prune => $opts{prune} );
     }
     : sub {
       my $dir = shift;
-      $visit_entry->($_) foreach $dir->children;
+      $visit_entry->($_) for $dir->children( prune => $opts{prune} );
       $callback->($dir);
     };
 
