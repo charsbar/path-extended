@@ -1,5 +1,8 @@
 Revision history for Path-Extended
 
+0.14 2009/07/04
+  - added file_or_dir() and dir_or_file() to ::Dir object too
+
 0.13 2009/06/26
   - added "prune" option to $dir->recurse/$dir->children.
 
