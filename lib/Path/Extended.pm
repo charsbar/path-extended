@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Sub::Install;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 sub import {
   my ($class, @imports) = @_;

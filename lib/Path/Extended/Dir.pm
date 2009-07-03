@@ -177,6 +177,22 @@ sub next {
 sub file   { shift->_related( file => @_ ); }
 sub subdir { shift->_related( dir  => @_ ); }
 
+sub file_or_dir {
+  my ($self, @args) = @_;
+
+  my $file = $self->_related( file => @args );
+  return $self->_related( dir => @args ) if -d $file->absolute;
+  return $file;
+}
+
+sub dir_or_file {
+  my ($self, @args) = @_;
+
+  my $dir = $self->_related( dir => @args );
+  return $self->_related( file => @args ) if -f $dir->absolute;
+  return $dir;
+}
+
 sub children {
   my ($self, %options) = @_;
 
@@ -321,6 +337,14 @@ As of 0.13, this may take a C<prune> option to exclude some of the children. See
 =head2 file, subdir
 
 returns a child L<Path::Extended::Class::File>/L<Path::Extended::Class::Dir> object in the directory.
+
+=head2 file_or_dir
+
+takes a file/subdirectory path and returns a L<Path::Extended::File> object if it doesn't point to an existing directory (if it does point to a directory, it returns a L<Path::Extended::Dir> object). This is handy if you don't know a path is a file or a directory. You can tell which is the case by calling ->is_dir method (if it's a file, ->is_dir returns false, otherwise true).
+
+=head2 dir_or_file
+
+does the same above but L<Path::Extended::Dir> has precedence.
 
 =head2 recurse
 

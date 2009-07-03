@@ -41,6 +41,7 @@ t/lib/Path/Extended/Test/File/Read.pm
 t/lib/Path/Extended/Test/File/Slurp.pm
 t/lib/Path/Extended/Test/File/Stat.pm
 t/lib/Path/Extended/Test/FileOrDir/Basic.pm
+t/lib/Path/Extended/Test/FileOrDir/ForDir.pm
 t/lib/Path/Extended/Test/Subclass/Dir.pm
 t/lib/Path/Extended/Test/Subclass/File.pm
 t/lib/Path/Extended/Test/Subclass/FileOrDir.pm
