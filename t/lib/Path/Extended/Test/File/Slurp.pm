@@ -85,4 +85,16 @@ sub mtime : Tests(2) {
   $file->unlink;
 }
 
+sub multiple_callbacks : Tests(2) {
+  my $class = shift;
+
+  my $utf8 = "テスト";
+
+  my $file = file('t/tmp/slurp.txt');
+  ok $file->save($utf8, encode => 'utf8', callback => sub { "$_\n" }), $class->message('file saved as utf8');
+  ok $file->slurp(decode => 'utf8', callback => sub { s/\n//s; $_ }) eq $utf8, $class->message('slurped successfully as utf8');
+
+  $file->unlink;
+}
+
 1;

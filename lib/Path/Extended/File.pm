@@ -155,8 +155,8 @@ sub slurp {
   my @callbacks;
   my $callback = sub {
     my $line = shift;
-    for my $subr (@callbacks) { $line = $subr->($line) }
-    $line
+    for my $subr (@callbacks) { $line = $subr->(local $_ = $line) }
+    $line;
   };
   if ( $options->{chomp} ) {
     push @callbacks, sub { my $line = shift; chomp $line; $line };
@@ -178,7 +178,7 @@ sub slurp {
 
   my @lines;
   while( defined (my $line = $self->getline )) {
-    $line = $callback->( local $_ = $line );
+    $line = $callback->($line);
     next if $filter && $line !~ /$filter/;
     push @lines, $line unless $options->{ignore_return_value};
   }
@@ -226,7 +226,7 @@ sub save {
   my @callbacks;
   my $callback = sub {
     my $line = shift;
-    for my $subr (@callbacks) { $line = $subr->($line) }
+    for my $subr (@callbacks) { $line = $subr->(local $_ = $line) }
     $line
   };
   if ( $options->{encode} ) {
