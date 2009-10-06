@@ -54,19 +54,18 @@ sub fatal_log : Test {
 sub logs_to_stderr : Tests(3) {
   my $class = shift;
 
-  eval { require IO::Capture::Stderr };
-  return $class->skip_this_test('this test requires IO::Capture::Stderr') if $@;
+  eval { require Capture::Tiny };
+  return $class->skip_this_test('this test requires Capture::Tiny') if $@;
 
   my $entity = Path::Extended::Entity->new;
-  my $capture = IO::Capture::Stderr->new;
 
   foreach my $level (qw( debug warn error )) {
-    $capture->start;
-    $entity->log( $level => { message => 'message' } );
-    $capture->stop;
+    my ($out, $err) = Capture::Tiny::capture(sub {
+      $entity->log( $level => { message => 'message' } );
+    });
 
     # single quotations will be converted to double while dumping
-    ok $capture->read =~ /\[$level\] { message => "message" }/, 
+    ok $err =~ /\[$level\] { message => "message" }/, 
       $class->message("proper $level message");
   }
 }
