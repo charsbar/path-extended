@@ -8,7 +8,7 @@ use Log::Dump;
 use Scalar::Util qw( blessed );
 
 use overload
-  '""'  => sub { shift->_path },
+  '""'  => sub { shift->path },
   'cmp' => sub { return "$_[0]" cmp "$_[1]" },
   '*{}' => sub { shift->_handle };
 
@@ -63,12 +63,12 @@ sub _unixify {
 
 sub _handle { shift->{handle} }
 
-sub _path {
+sub path {
   my $self = shift;
   return ( $self->is_absolute ) ? $self->absolute : $self->relative;
 }
 
-sub stringify { shift->_path }
+sub stringify { shift->path }
 
 sub is_dir      { shift->{is_dir} }
 sub is_open     { shift->{handle}      ? 1 : 0 }
@@ -264,7 +264,7 @@ returns a File::stat object for the file/directory.
 
 returns a L<Path::Extended::Dir> object that points to the parent directory of the file/directory.
 
-=head2 stringify
+=head2 path, stringify
 
 explicitly returns a path string.
 

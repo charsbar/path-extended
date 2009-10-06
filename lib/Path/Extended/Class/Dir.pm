@@ -44,7 +44,7 @@ sub dir_list {
 sub volume {
   my $self = shift;
 
-  my ($vol) = File::Spec->splitpath( $self->_path );
+  my ($vol) = File::Spec->splitpath( $self->path );
   return $vol;
 }
 

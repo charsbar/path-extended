@@ -29,7 +29,7 @@ sub new_from_file {
 sub _parts {
   my ($self, $abs) = @_;
 
-  my $path = $abs ? $self->absolute : $self->_path;
+  my $path = $abs ? $self->absolute : $self->path;
   my ($vol, $dir, $file) = File::Spec->splitpath( $path );
   return split '/', "$dir$file";
 }
