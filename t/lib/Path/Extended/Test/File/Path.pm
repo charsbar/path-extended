@@ -11,9 +11,9 @@ sub constructor : Tests(4) {
 
   my $file = file('t/tmp/file.txt');
 
-  ok $file->_path, $class->message('constructor contains the path');
+  ok $file->path, $class->message('constructor contains the path');
 
-  ok( File::Spec->file_name_is_absolute( $file->_path ),
+  ok( File::Spec->file_name_is_absolute( $file->path ),
     $class->message('and the path is absolute'));
 
   ok !$file->_handle, $class->message('and its handle is not open');
@@ -30,7 +30,7 @@ sub forward_slashes : Test {
 
   my $file = file('t\\tmp\\file.txt');
 
-  ok $file->_path !~ /\\/,
+  ok $file->path !~ /\\/,
     $class->message('path does not contain back slashes');
 }
 
