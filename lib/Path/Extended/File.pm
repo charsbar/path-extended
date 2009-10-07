@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base qw( Path::Extended::Entity );
 use IO::Handle;
+use Sub::Install;
 
 sub _initialize {
   my ($self, @args) = @_;
@@ -83,20 +84,25 @@ sub binmode {
   }
 }
 
-sub print     { return unless $_[0]->is_open; shift->{handle}->print(@_); }
-sub printf    { return unless $_[0]->is_open; shift->{handle}->printf(@_); }
-sub say       { return unless $_[0]->is_open; shift->{handle}->say(@_); }
-sub getline   { return unless $_[0]->is_open; shift->{handle}->getline(@_); }
-sub getlines  { return unless $_[0]->is_open; shift->{handle}->getlines(@_); }
-sub read      { return unless $_[0]->is_open; shift->{handle}->read(@_); }
-sub sysread   { return unless $_[0]->is_open; shift->{handle}->sysread(@_); }
-sub write     { return unless $_[0]->is_open; shift->{handle}->write(@_); }
-sub syswrite  { return unless $_[0]->is_open; shift->{handle}->syswrite(@_); }
-sub autoflush { return unless $_[0]->is_open; shift->{handle}->autoflush(@_); }
-sub fileno    { return unless $_[0]->is_open; shift->{handle}->fileno(@_); }
+BEGIN {
+  my @io_methods = qw(
+    print printf say getline getlines read sysread write syswrite
+    autoflush flush printflush getc ungetc truncate blocking
+    eof fileno error sync fcntl ioctl
+  );
 
-sub lock_ex   { return unless $_[0]->is_open; shift->_lock }
-sub lock_sh   { return unless $_[0]->is_open; shift->_lock('share') }
+  foreach my $method (@io_methods) {
+    Sub::Install::install_sub({
+      as   => $method,
+      code => sub {
+        return unless $_[0]->is_open; shift->{handle}->$method(@_);
+      },
+    });
+  }
+}
+
+sub lock_ex { return unless $_[0]->is_open; shift->_lock }
+sub lock_sh { return unless $_[0]->is_open; shift->_lock('share') }
 
 sub _lock {
   my ($self, $mode) = @_;
@@ -331,7 +337,7 @@ may take an argument (to specify I/O layers), and arranges for the stored file h
 
 closes the stored file handle and removes it from the object. No effect if the file is not open.
 
-=head2 print, printf, say, getline, getlines, read, write, sysread, syswrite, autoflush, fileno
+=head2 print, printf, say, getline, getlines, read, sysread, write, syswrite, autoflush, flush, printflush, getc, ungetc, truncate, blocking, eof, fileno, error, sync, fcntl, ioctl
 
 are simple wrappers of the equivalents of L<IO::Handle>. No effect if the file is not open.
 
