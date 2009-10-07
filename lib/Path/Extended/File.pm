@@ -93,6 +93,7 @@ sub sysread   { return unless $_[0]->is_open; shift->{handle}->sysread(@_); }
 sub write     { return unless $_[0]->is_open; shift->{handle}->write(@_); }
 sub syswrite  { return unless $_[0]->is_open; shift->{handle}->syswrite(@_); }
 sub autoflush { return unless $_[0]->is_open; shift->{handle}->autoflush(@_); }
+sub fileno    { return unless $_[0]->is_open; shift->{handle}->fileno(@_); }
 
 sub lock_ex   { return unless $_[0]->is_open; shift->_lock }
 sub lock_sh   { return unless $_[0]->is_open; shift->_lock('share') }
@@ -330,7 +331,7 @@ may take an argument (to specify I/O layers), and arranges for the stored file h
 
 closes the stored file handle and removes it from the object. No effect if the file is not open.
 
-=head2 print, printf, say, getline, getlines, read, write, sysread, syswrite, autoflush
+=head2 print, printf, say, getline, getlines, read, write, sysread, syswrite, autoflush, fileno
 
 are simple wrappers of the equivalents of L<IO::Handle>. No effect if the file is not open.
 
