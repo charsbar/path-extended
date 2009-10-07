@@ -136,7 +136,7 @@ sub sysseek {
 }
 
 sub tell {
-  my ($self, $pos, $whence) = @_;
+  my $self = shift;
 
   return unless $self->is_open;
 
