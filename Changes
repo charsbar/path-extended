@@ -1,9 +1,11 @@
 Revision history for Path-Extended
 
-0.15 to be released
+0.15 2009/10/07
   - $_ was not properly set while slurping/saving with multiple
     callbacks
   - renamed _path and made it public to support PSGI/Plack
+  - added other IO::Handle methods including fileno
+  - fleshed out the synopsis
 
 0.14 2009/07/04
   - added file_or_dir() and dir_or_file() to ::Dir object too
