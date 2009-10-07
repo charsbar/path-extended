@@ -303,6 +303,33 @@ Path::Extended::File
   use Path::Extended::File;
   my $file = Path::Extended::File->new('path/to/file');
 
+  # you can get information of the file
+  print $file->basename;  # file
+  print $file->absolute;  # /absolute/path/to/file
+
+  # you can get an object for the parent directory
+  my $parent_dir = $file->parent;
+
+  # Path::Extended::File object works like an IO handle
+  $file->openr;
+  my $first_line = $file->getline;
+  print <$file>;
+  close $file;
+
+  # it also can do some extra file related tasks
+  $file->copy_to('/other/path/to/file');
+  $file->unlink if $file->exists;
+
+  $file->slurp(chomp => 1, callback => sub {
+    my $line = shift;
+    print $line, "\n" unless substr($line, 0, 1) eq '#';
+  });
+
+  file('/path/to/other_file')->save(\@lines, { mkdir => 1 });
+
+  # it has a logger, too
+  $file->log( fatal => "Couldn't open $file: $!" );
+
 =head1 DESCRIPTION
 
 This class implements file-specific methods. Most of them are simple wrappers of the equivalents from various File::* or IO::* classes. See also L<Path::Class::Entity> for common methods like C<copy> and C<move>.

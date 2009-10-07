@@ -273,12 +273,42 @@ Path::Extended::Dir
 
   use Path::Extended::Dir;
 
-  my $dir = Path::Extended::Dir->new('path/to/somewhere');
+  my $dir = Path::Extended::Dir->new('path/to/dir');
   my $parent_dir = Path::Extended::Dir->new_from_file('path/to/some.file');
 
-  foreach my $file ( $dir->find('*.txt') ) {
-    print $file->relative, "\n";  # each $file is a L<Path::Extended::File> object.
+  # you can get information of the directory
+  print $dir->basename;  # dir
+  print $dir->absolute;  # /absolute/path/to/dir
+
+  # you can get an object for the parent directory or children
+  my $parent_dir = $dir->parent;
+  my $sub_dir    = $dir->subdir('path/to/subdir');
+  my $sub_file   = $dir->file('path/to/file');
+
+  # Path::Extended::Dir object works like a directory handle
+  $dir->open;
+  while( my $entry = $dir->read ) {
+    print $entry->basename, "\n";
   }
+  $dir->close;
+
+  # it also can do some extra file related tasks
+  $dir->copy_to('/other/path/to/dir');
+  $dir->unlink if $dir->exists;
+  $dir->mkdir;
+
+  $dir->recurse(prune => 1, callback => sub {
+    my $entry = shift;  # Path::Extended::File/Dir object
+    return if $entry->is_dir;
+    print $entry->slurp;
+  });
+
+  foreach my $file ( $dir->find('*.txt') ) {
+    print $file->relative, "\n";
+  }
+
+  # it has a logger, too
+  $dir->log( fatal => "Couldn't open $dir: $!" );
 
 =head1 DESCRIPTION
 
