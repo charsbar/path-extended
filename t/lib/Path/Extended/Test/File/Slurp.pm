@@ -17,6 +17,33 @@ sub basic : Tests(2) {
   $file->unlink;
 }
 
+sub multilines : Tests(2) {
+  my $class = shift;
+
+  my $file = file('t/tmp/slurp.txt');
+
+  my $content = "line1\nline2\nline3\n";
+  ok $file->save($content), $class->message('file saved');
+  ok $file->slurp eq $content, $class->message('slurped successfully');
+
+  $file->unlink;
+}
+
+sub list : Tests(2) {
+  my $class = shift;
+
+  my $file = file('t/tmp/slurp.txt');
+
+  my $content = "line1\nline2\nline3\n";
+  ok $file->save($content), $class->message('file saved');
+
+  my @lines = $file->slurp;
+
+  ok $lines[0] eq "line1\n", $class->message('slurped successfully');
+
+  $file->unlink;
+}
+
 sub binmode : Tests(2) {
   my $class = shift;
 
