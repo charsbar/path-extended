@@ -183,6 +183,13 @@ sub slurp {
   }
   $options->{ignore_return_value} = 1 if !defined wantarray;
 
+  # shortcut
+  if (!@callbacks and !$filter and !wantarray) {
+    my $got = do { local $/; $self->getline };
+    $self->close;
+    return $got;
+  }
+
   my @lines;
   while( defined (my $line = $self->getline )) {
     $line = $callback->($line);
