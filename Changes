@@ -1,6 +1,6 @@
 Revision history for Path-Extended
 
-0.16 to be released
+0.16 2009/12/19
   - added a shortcut in the slurp method; no need to loop while
     slurping without any callbacks/filters
   - fixed pod nits spotted by FWIE
