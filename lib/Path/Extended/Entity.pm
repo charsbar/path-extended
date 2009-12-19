@@ -118,6 +118,18 @@ sub exists {
   -e $self->absolute ? 1 : 0;
 }
 
+sub is_writable {
+  my $self = shift;
+
+  -w $self->absolute ? 1 : 0;
+}
+
+sub is_readable {
+  my $self = shift;
+
+  -r $self->absolute ? 1 : 0;
+}
+
 sub copy_to {
   my ($self, $destination) = @_;
 
@@ -251,6 +263,10 @@ unlinks the file/directory. The same thing can be said as for the C<rename_to> m
 =head2 exists
 
 returns true if the file/directory exists.
+
+=head2 is_readable, is_writable
+
+returns true if the file/directory is readable/writable.
 
 =head2 is_open
 
