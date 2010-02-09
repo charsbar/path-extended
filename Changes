@@ -1,5 +1,8 @@
 Revision history for Path-Extended
 
+0.17 2010/02/09
+  - should not ignore volume unless specified so
+
 0.16 2009/12/19
   - added a shortcut in the slurp method; no need to loop while
     slurping without any callbacks/filters
