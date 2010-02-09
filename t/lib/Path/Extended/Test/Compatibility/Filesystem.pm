@@ -7,6 +7,9 @@ use Path::Extended::Class;
 
 # ripped from Path::Class' t/03-filesystem.t
 
+sub initialize { $Path::Extended::IgnoreVolume = 1; }
+sub finalize   { $Path::Extended::IgnoreVolume = 0; }
+
 sub tests00_file : Tests(9) {
   my $class = shift;
 

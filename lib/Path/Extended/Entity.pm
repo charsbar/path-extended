@@ -83,7 +83,8 @@ sub absolute {
   }
   elsif ( $self->{_compat} ) {
     my ($vol, @parts) = File::Spec->splitpath( $path );
-    return $self->_unixify( File::Spec->catdir( @parts ) );
+    $vol = '' if $Path::Extended::IgnoreVolume;
+    return $self->_unixify( File::Spec->catpath($vol, File::Spec->catdir( @parts ), '') );
   }
   else {
     return $self->_unixify($path);
