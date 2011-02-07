@@ -16,7 +16,7 @@ WriteMakefile(
     'File::Copy::Recursive' => 0,
     'File::Find::Rule'      => 0,
     'File::Path'            => 0,
-    'File::Spec'            => 0,
+    'File::Spec'            => 3.23,
     'File::stat'            => 0,
     'IO'                    => 1.23,
     'Log::Dump'             => 0,
