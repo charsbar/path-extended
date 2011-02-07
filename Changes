@@ -1,5 +1,8 @@
 Revision history for Path-Extended
 
+0.18 to be released
+  - calls for File::Spec 3.23 to avoid relative/absolute issues
+
 0.17 2010/02/09
   - should not ignore volume unless specified so
 
