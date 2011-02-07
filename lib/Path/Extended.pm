@@ -37,7 +37,7 @@ sub import {
   foreach my $name (@imports) {
     next unless $map{$name};
 
-    Sub::Install::install_sub({
+    Sub::Install::reinstall_sub({
       as   => $name,
       into => $caller,
       code => $map{$name},
