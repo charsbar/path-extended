@@ -72,7 +72,7 @@ sub stringify { shift->path }
 
 sub is_dir      { shift->{is_dir} }
 sub is_open     { shift->{handle}      ? 1 : 0 }
-sub is_absolute { shift->{_absolute}   ? 1 : 0 }
+sub is_absolute { shift->{_absolute}   ? 1 : '' }
 
 sub resolve {
   my $self = shift;
