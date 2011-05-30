@@ -204,7 +204,7 @@ sub children {
     my $type = ( -d File::Spec->catdir($self->absolute, $entry) )
                ? 'dir' : 'file';
     my $child = $self->_related( $type => $entry );
-    if ($options{prune}) {
+    if ($options{prune} or $options{no_hidden}) {
       if (ref $options{prune} eq 'Regexp') {
         next if $entry =~ /$options{prune}/;
       }
