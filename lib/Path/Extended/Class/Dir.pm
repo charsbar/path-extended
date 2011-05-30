@@ -41,43 +41,6 @@ sub dir_list {
   return @parts[$offset .. $length + $offset - 1];
 }
 
-sub volume {
-  my $self = shift;
-
-  my ($vol) = File::Spec->splitpath( $self->path );
-  return $vol;
-}
-
-sub subsumes {
-  my ($self, $other) = @_;
-
-  Carp::croak "No second entity given to subsumes()" unless $other;
-  my $class = $self->_class('dir');
-  $other = $class->new($other) unless UNIVERSAL::isa($other, $class);
-  $other = $other->dir unless $other->is_dir;
-
-  if ( $self->volume ) {
-    return 0 if $other->volume eq $self->volume;
-  }
-
-  my @my_parts    = $self->_parts(1);
-  my @other_parts = $other->_parts(1);
-
-  return 0 if @my_parts > @other_parts;
-
-  my $i = 0;
-  while ( $i < @my_parts ) {
-    return 0 unless $my_parts[$i] eq $other_parts[$i];
-    $i++;
-  }
-  return 1;
-}
-
-sub contains {
-  my ($self, $other) = @_;
-  return !!(-d $self and (-e $other or -l $other) and $self->subsumes($other));
-}
-
 1;
 
 __END__
@@ -92,17 +55,9 @@ L<Path::Extended::Class::Dir> behaves pretty much like L<Path::Class::Dir> and c
 
 =head1 COMPATIBLE METHODS
 
-=head2 volume
-
-returns a volume of the path (if any).
-
 =head2 dir_list
 
 returns parts of the path. See L<Path::Class::Dir> for details.
-
-=head2 subsumes, contains
-
-returns if the path belongs to the object, or vice versa. See L<Path::Class::Dir> for details.
 
 =head1 INCOMPATIBLE METHODS
 
