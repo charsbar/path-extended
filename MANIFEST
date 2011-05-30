@@ -31,6 +31,7 @@ t/lib/Path/Extended/Test/Dir/Path.pm
 t/lib/Path/Extended/Test/Dir/Prune.pm
 t/lib/Path/Extended/Test/Dir/Recurse.pm
 t/lib/Path/Extended/Test/Dir/Seek.pm
+t/lib/Path/Extended/Test/Dir/Subsumes.pm
 t/lib/Path/Extended/Test/Entity/Log.pm
 t/lib/Path/Extended/Test/File.pm
 t/lib/Path/Extended/Test/File/Copy.pm
