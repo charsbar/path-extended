@@ -152,7 +152,8 @@ sub slurp {
     ? $args[0]
     : { @args };
 
-  $self->open('r');
+  my $iomode = $options->{iomode} || 'r';
+  $self->open($iomode);
   unless ( $self->is_open ) {
     $self->log( warn => "Can't read", $self->{path}, $! );
     return;

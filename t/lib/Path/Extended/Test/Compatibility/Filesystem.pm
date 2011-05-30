@@ -127,6 +127,35 @@ sub tests02_slurp : Tests(6) {
   ok((not -e $file), $class->message("test 42"));
 }
 
+sub tests02_slurp_iomode : Tests(6) {  # added
+  my $class = shift;
+
+  return $class->skip_this_test("IO modes not available until perl 5.7.1") unless $^V ge v5.7.1;
+
+  my $file = file('t', 'slurp');
+  ok $file, $class->message("test 37'");
+
+  my $fh = $file->open('>:raw') or die "Can't create $file: $!";
+  print $fh "Line1\r\nLine2\r\n\302\261\r\n";
+  close $fh;
+  ok -e $file, $class->message("test 38'");
+
+  my $content = $file->slurp(iomode => '<:raw');
+  is $content, "Line1\r\nLine2\r\n\302\261\r\n", $class->message("test 39'");
+
+  my $line3 = "\302\261\n";
+  utf8::decode($line3);
+  my @content = $file->slurp(iomode => '<:crlf:utf8');
+  is_deeply \@content, ["Line1\n", "Line2\n", $line3], $class->message("test 40'");
+
+  chop $line3;
+  @content = $file->slurp(chomp => 1, iomode => '<:crlf:utf8');
+  is_deeply \@content, ["Line1", "Line2", $line3], $class->message("test 41'");
+
+  $file->remove;
+  ok((not -e $file), $class->message("test 42'"));
+}
+
 sub test03_absolute_relative : Test Skip('known incompatibility') {
   my $class = shift;
 
