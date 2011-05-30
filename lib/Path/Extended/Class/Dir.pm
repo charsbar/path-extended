@@ -63,6 +63,11 @@ sub tempfile {
   return File::Temp::tempfile(@_, DIR => $self->stringify);
 }
 
+sub mkdir {require File::Path; File::Path::mkpath(shift->path, @_)}
+sub rmdir {require File::Path; File::Path::rmtree(shift->path, @_)}
+*mkpath = \&mkdir;
+*rmtree = *remove = \&rmdir;
+
 1;
 
 __END__
