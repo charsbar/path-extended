@@ -39,13 +39,13 @@ sub _related {
   my $item;
   if ( @parts && $parts[0] eq '..' ) { # parent
     require File::Basename;
-    $item = $class->new( File::Basename::dirname($self->absolute) );
+    $item = $class->new( File::Basename::dirname($self->_absolute) );
   }
   elsif ( @parts && File::Spec->file_name_is_absolute($parts[0]) ) {
     $item = $class->new( @parts );
   }
   else {
-    $item = $class->new( $self->absolute, @parts );
+    $item = $class->new( $self->_absolute, @parts );
   }
   foreach my $key ( grep /^_/, keys %{ $self } ) {
     $item->{$key} = $self->{$key};
@@ -65,7 +65,7 @@ sub _handle { shift->{handle} }
 
 sub path {
   my $self = shift;
-  return ( $self->is_absolute ) ? $self->absolute : $self->relative;
+  return ( $self->is_absolute ) ? $self->_absolute : $self->_relative;
 }
 
 sub stringify { shift->path }
@@ -81,7 +81,7 @@ sub resolve {
   $self;
 }
 
-sub absolute {
+sub _absolute {
   my ($self, %options) = @_;
 
   my $path = File::Spec->canonpath( $self->{path} );
@@ -98,12 +98,12 @@ sub absolute {
   }
 }
 
-sub relative {
+sub _relative {
   my $self = shift;
   my $base = shift if @_ % 2;
   my %options = @_;
 
-  $base ||= $options{base};
+  $base ||= $options{base} || $self->{_base};
 
   my $path = File::Spec->abs2rel( $self->{path}, $base );
      $path = $self->_unixify($path) unless $options{native};
@@ -111,31 +111,34 @@ sub relative {
   $path;
 }
 
+sub absolute { shift->_absolute(@_) }
+sub relative { shift->_relative(@_) }
+
 sub parent { shift->_related( dir => '..' ); }
 
 sub unlink {
   my $self = shift;
 
   $self->close if $self->is_open;
-  unlink $self->absolute if $self->exists;
+  unlink $self->_absolute if $self->exists;
 }
 
 sub exists {
   my $self = shift;
 
-  -e $self->absolute ? 1 : 0;
+  -e $self->_absolute ? 1 : 0;
 }
 
 sub is_writable {
   my $self = shift;
 
-  -w $self->absolute ? 1 : 0;
+  -w $self->_absolute ? 1 : 0;
 }
 
 sub is_readable {
   my $self = shift;
 
-  -r $self->absolute ? 1 : 0;
+  -r $self->_absolute ? 1 : 0;
 }
 
 sub copy_to {
@@ -150,7 +153,7 @@ sub copy_to {
   $destination = $class->new( "$destination" );
 
   require File::Copy::Recursive;
-  File::Copy::Recursive::rcopy( $self->absolute, $destination->absolute )
+  File::Copy::Recursive::rcopy( $self->_absolute, $destination->_absolute )
     or do { $self->log( error =>  $! ); return; };
 
   $self;
@@ -170,10 +173,10 @@ sub move_to {
   $self->close if $self->is_open;
 
   require File::Copy::Recursive;
-  File::Copy::Recursive::rmove( $self->absolute, $destination->absolute )
+  File::Copy::Recursive::rmove( $self->_absolute, $destination->_absolute )
     or do { $self->log( error =>  $! ); return; };
 
-  $self->{path} = $destination->absolute;
+  $self->{path} = $destination->_absolute;
 
   $self;
 }
@@ -191,10 +194,10 @@ sub rename_to {
 
   $self->close if $self->is_open;
 
-  rename $self->absolute => $destination->absolute
+  rename $self->_absolute => $destination->_absolute
     or do { $self->log( error => $! ); return; };
 
-  $self->{path} = $destination->absolute;
+  $self->{path} = $destination->_absolute;
 
   $self;
 }

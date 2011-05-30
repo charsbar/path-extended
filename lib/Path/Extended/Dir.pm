@@ -29,7 +29,7 @@ sub new_from_file {
 sub _parts {
   my ($self, $abs) = @_;
 
-  my $path = $abs ? $self->absolute : $self->path;
+  my $path = $abs ? $self->_absolute : $self->path;
   my ($vol, $dir, $file) = File::Spec->splitpath( $path );
   return split '/', "$dir$file";
 }
@@ -45,7 +45,7 @@ sub open {
 
   $self->close if $self->is_open;
 
-  opendir my $dh, $self->absolute
+  opendir my $dh, $self->_absolute
     or do { $self->log( error => $! ); return; };
 
   return $dh if $self->{_compat} && defined wantarray;
@@ -118,9 +118,9 @@ sub _find {
 
   require File::Find::Rule;
 
-  my @items = grep { $_->relative($self->absolute) !~ m{/\.} }
+  my @items = grep { $_->_relative($self->_absolute) !~ m{/\.} }
               map  { $self->_related( $type, $_ ) }
-              File::Find::Rule->$type->name($rule)->in($self->absolute);
+              File::Find::Rule->$type->name($rule)->in($self->_absolute);
 
   if ( $options{callback} ) {
     @items = $options{callback}->( @items );
@@ -136,7 +136,7 @@ sub rmdir {
 
   if ( $self->exists ) {
     require File::Path;
-    eval { File::Path::rmtree( $self->absolute ) };
+    eval { File::Path::rmtree( $self->_absolute ) };
     do { $self->log( error => $@ ); return; } if $@;
   }
   $self;
@@ -149,7 +149,7 @@ sub mkdir {
 
   unless ( $self->exists ) {
     require File::Path;
-    eval { File::Path::mkpath( $self->absolute ) };
+    eval { File::Path::mkpath( $self->_absolute ) };
     do { $self->log( error => $@ ); return; } if $@;
   }
   $self;
@@ -166,7 +166,7 @@ sub next {
     $self->close;
     return;
   }
-  if ( -d File::Spec->catdir( $self->absolute, $next ) ) {
+  if ( -d File::Spec->catdir( $self->_absolute, $next ) ) {
     return $self->_related( dir => $next );
   }
   else {
@@ -181,7 +181,7 @@ sub file_or_dir {
   my ($self, @args) = @_;
 
   my $file = $self->_related( file => @args );
-  return $self->_related( dir => @args ) if -d $file->absolute;
+  return $self->_related( dir => @args ) if -d $file->_absolute;
   return $file;
 }
 
@@ -189,7 +189,7 @@ sub dir_or_file {
   my ($self, @args) = @_;
 
   my $dir = $self->_related( dir => @args );
-  return $self->_related( file => @args ) if -f $dir->absolute;
+  return $self->_related( file => @args ) if -f $dir->_absolute;
   return $dir;
 }
 
@@ -201,7 +201,7 @@ sub children {
   my @children;
   while ( my $entry = readdir $dh ) {
     next if (!$options{all} && ( $entry eq '.' || $entry eq '..' ));
-    my $type = ( -d File::Spec->catdir($self->absolute, $entry) )
+    my $type = ( -d File::Spec->catdir($self->_absolute, $entry) )
                ? 'dir' : 'file';
     my $child = $self->_related( $type => $entry );
     if ($options{prune} or $options{no_hidden}) {
