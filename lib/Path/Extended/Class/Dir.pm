@@ -43,6 +43,12 @@ sub dir_list {
   return @parts[$offset .. $length + $offset - 1];
 }
 
+sub tempfile {
+  my $self = shift;
+  require File::Temp;
+  return File::Temp::tempfile(@_, DIR => $self->stringify);
+}
+
 1;
 
 __END__
@@ -60,6 +66,10 @@ L<Path::Extended::Class::Dir> behaves pretty much like L<Path::Class::Dir> and c
 =head2 dir_list
 
 returns parts of the path. See L<Path::Class::Dir> for details.
+
+=head2 tempfile
+
+returns a temporary file handle (and its corresponding file name in a list context). See L<Path::Class::Dir> and L<File::Temp> for details
 
 =head1 INCOMPATIBLE METHODS
 
