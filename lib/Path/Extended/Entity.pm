@@ -8,9 +8,10 @@ use Log::Dump;
 use Scalar::Util qw( blessed );
 
 use overload
-  '""'  => sub { shift->path },
-  'cmp' => sub { return "$_[0]" cmp "$_[1]" },
-  '*{}' => sub { shift->_handle };
+  '""'   => sub { shift->path },
+  'cmp'  => sub { return "$_[0]" cmp "$_[1]" },
+  'bool' => sub { shift->_boolify },
+  '*{}'  => sub { shift->_handle };
 
 sub new {
   my $class = shift;
@@ -22,6 +23,7 @@ sub new {
 }
 
 sub _initialize {1}
+sub _boolify {1}
 
 sub _class {
   my ($self, $type) = @_;

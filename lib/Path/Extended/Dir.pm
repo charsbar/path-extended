@@ -199,7 +199,7 @@ sub children {
   my $dh = $self->open or Carp::croak "Can't open directory $self: $!";
 
   my @children;
-  while ( my $entry = readdir $dh ) {
+  while (defined(my $entry = readdir $dh)) {
     next if (!$options{all} && ( $entry eq '.' || $entry eq '..' ));
     my $type = ( -d File::Spec->catdir($self->_absolute, $entry) )
                ? 'dir' : 'file';
