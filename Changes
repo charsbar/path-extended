@@ -1,5 +1,19 @@
 Revision history for Path-Extended
 
+0.19 2011/05/31
+  - added iomode (for slurp) and no_hidden (for children) options
+    introduced in Path::Class 0.19
+  - dir(undef) now returns undef (as Path::Class 0.17 does)
+  - moved subsumes/contains (of ::Class::Dir class) methods to
+    ::Dir class
+  - subsumes/contains didn't work well if paths have a volume
+  - added tempfile method (only available for ::Class::Dir)
+    introduced in Path::Class 0.24
+  - added resolve method introduced Path::Class 0.17
+  - improved Path::Class compatibility (absolute/relative,
+    mkdir/rmdir)
+  - fixed 0-named subdirectory handling
+
 0.18 2011/02/08
   - calls for File::Spec 3.23 to avoid relative/absolute issues
 
