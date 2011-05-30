@@ -57,6 +57,10 @@ L<Path::Extended::Class::File> behaves pretty much like L<Path::Class::File> and
 
 returns a parent L<Path::Extended::Class::Dir> object of the file.
 
+=head2 absolute, relative
+
+change how to stringify internally and return the file object (instead of the path itself).
+
 =head2 volume
 
 returns a volume of the path (if any).

@@ -82,6 +82,18 @@ L<Path::Extended::Class::Dir> behaves pretty much like L<Path::Class::Dir> and c
 
 =head1 COMPATIBLE METHODS
 
+=head2 absolute, relative
+
+change how to stringify internally and return the file object (instead of the path itself).
+
+=head2 mkdir, mkpath
+
+create a directory with L<File::Path>, and return the result (instead of the directory object itself).
+
+=head2 rmtree, rmdir, remove
+
+remove a directory with L<File::Path>, and return the result (instead of the directory object itself).
+
 =head2 dir_list
 
 returns parts of the path. See L<Path::Class::Dir> for details.
