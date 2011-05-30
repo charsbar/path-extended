@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Test::Classy::Base;
 use Path::Extended::Class;
+use File::Temp qw/tmpnam tempdir/;
 
 # ripped from Path::Class' t/03-filesystem.t
 
@@ -13,7 +14,7 @@ sub finalize   { $Path::Extended::IgnoreVolume = 0; }
 sub tests00_file : Tests(9) {
   my $class = shift;
 
-  my $file = file('t', 'testfile');
+  my $file = file(scalar tmpnam());
   ok $file, $class->message("test 02");
 
   {
@@ -40,67 +41,84 @@ sub tests00_file : Tests(9) {
   ok( (not -e $file), $class->message("test 10"));
 }
 
-sub tests01_dir : Tests(26) {
+sub tests01_dir : Tests(33) {
   my $class = shift;
 
-  my $air = dir('t', 'testdir');
-  ok $air, $class->message("test 11");
+  my $dir = dir(tempdir(CLEANUP => 1));
+  ok $dir, $class->message("test 11");
+  ok -d $dir, $class->message("test 13");
 
-  $air->remove if $air->exists;
-
-  ok mkdir($air, 0777), $class->message("test 12");
-  ok -d $air, $class->message("test 13");
-
-  my $file = $air->file('foo.x');
+  my $file = $dir->file('foo.x');
   $file->touch;
   ok -e $file, $class->message("test 14");
 
   {
-    my $ah = $air->open;
-    ok $ah, $class->message("test 15");
+    my $dh = $dir->open;
+    ok $dh, $class->message("test 15");
 
-    my @files = readdir $ah;
+    my @files = readdir $dh;
     is scalar @files, 3, $class->message("test 16");
     ok( (scalar grep { $_ eq 'foo.x' } @files), $class->message("test 17"));
   }
 
-  ok $air->rmtree, $class->message("test 18");
-  ok !-e $air, $class->message("test 19");
+  ok $dir->rmtree, $class->message("test 18");
+  ok !-e $dir, $class->message("test 19");
 
-  $air = dir('t', 'foo', 'bar');
-  ok $air->mkpath, $class->message("test 20");
-  ok -d $air, $class->message("test 21");
+  $dir = dir('t', 'foo', 'bar');
+  $dir->parent->rmtree if $dir->parent->exists;
 
-  $air = $air->parent;
-  ok $air->rmtree, $class->message("test 22");
-  ok !-e $air, $class->message("test 23");
+  ok $dir->mkpath, $class->message("test 20");
+  ok -d $dir, $class->message("test 21");
 
-  $air = dir('t', 'foo');
-  ok $air->mkpath, $class->message("test 24");
-  ok $air->subdir('dir')->mkpath, $class->message("test 25");
-  ok -d $air->subdir('dir'), $class->message("test 26");
+  $dir = $dir->parent;
+  ok $dir->rmtree, $class->message("test 22");
+  ok !-e $dir, $class->message("test 23");
 
-  ok $air->file('file.x')->open('w'), $class->message("test 27");
-  ok $air->file('0')->open('w'), $class->message("test 28");
+  $dir = dir('t', 'foo');
+  ok $dir->mkpath, $class->message("test 24");
+  ok $dir->subdir('dir')->mkpath, $class->message("test 25");
+  ok -d $dir->subdir('dir'), $class->message("test 26");
 
+  ok $dir->file('file.x')->touch, $class->message("test 27");
+  ok $dir->file('0')->touch, $class->message("test 28");
   my @contents;
-  while (my $file = $air->next) {
+  while (my $file = $dir->next) {
     push @contents, $file;
   }
   is scalar @contents, 5, $class->message("test 29");
 
   my $joined = join ' ', map $_->basename, sort grep {-f $_} @contents;
   is $joined, '0 file.x', $class->message("test 30");
-  my ($subdir) = grep {$_ eq $air->subdir('dir')} @contents;
+
+  my ($subdir) = grep {$_ eq $dir->subdir('dir')} @contents;
   ok $subdir, $class->message("test 31");
   is -d $subdir, 1, $class->message("test 32");
 
-  ($file) = grep {$_ eq $air->file('file.x')} @contents;
+  ($file) = grep {$_ eq $dir->file('file.x')} @contents;
   ok $file, $class->message("test 33");
   is -d $file, '', $class->message("test 34");
 
-  ok $air->rmtree, $class->message("test 35");
-  ok !-e $air, $class->message("test 36");
+  ok $dir->rmtree, $class->message("test 35");
+  ok !-e $dir, $class->message("test 36");
+
+  # Try again with directory called '0', in curdir
+  my $orig = dir()->absolute;
+
+  ok $dir->mkpath, $class->message("test ex 01");
+  ok chdir($dir), $class->message("test ex 02");
+  my $dir2 = dir();
+  ok $dir2->subdir('0')->mkpath, $class->message("test ex 03");
+  ok -d $dir2->subdir('0'), $class->message("test ex 04");
+
+  @contents = ();
+  while (my $file = $dir2->next) {
+    push @contents, $file;
+  }
+  ok grep({$_ eq '0'} @contents), $class->message("test ex 05");
+
+  ok chdir($orig), $class->message("test ex 06");
+  ok $dir->rmtree, $class->message("test ex 07");
+  ok !-e $dir, $class->message("test ex 08");
 }
 
 sub tests02_slurp : Tests(6) {
