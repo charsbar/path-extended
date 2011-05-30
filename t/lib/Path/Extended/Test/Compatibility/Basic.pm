@@ -94,7 +94,7 @@ sub test05_parents : Tests(9) {
   ok $dir->parent->parent->parent->parent->parent eq '../..', $class->message("test 35");
 }
 
-sub tests06_trailing_slash : Tests(6) {
+sub tests06_trailing_slash : Tests(7) {
   my $class = shift;
 
   my $dir = dir("foo/");
@@ -106,6 +106,7 @@ sub tests06_trailing_slash : Tests(6) {
   ok dir() eq '.', $class->message("test 39");
   ok dir('', 'var', 'tmp') eq '/var/tmp', $class->message("test 40");
   ok dir()->absolute eq dir(Cwd::cwd())->cleanup, $class->message("test 41");
+  ok !defined dir(undef), $class->message("dir(undef)"); # added
 }
 
 sub tests07_relative : Tests(5) {

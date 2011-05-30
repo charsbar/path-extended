@@ -7,6 +7,8 @@ use base qw( Path::Extended::Dir );
 sub _initialize {
   my ($self, @args) = @_;
 
+  return if @args && !defined $args[0];
+
   my $dir = @args ? File::Spec->catdir( @args ) : File::Spec->curdir;
 
   $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );

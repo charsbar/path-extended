@@ -16,12 +16,12 @@ sub new {
   my $class = shift;
   my $self  = bless {}, $class;
 
-  $self->_initialize(@_);
+  $self->_initialize(@_) or return;
 
   $self;
 }
 
-sub _initialize {}
+sub _initialize {1}
 
 sub _class {
   my ($self, $type) = @_;
