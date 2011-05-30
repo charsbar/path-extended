@@ -105,7 +105,7 @@ sub tests06_trailing_slash : Tests(7) {
   ok dir('') eq '/', $class->message("test 38");
   ok dir() eq '.', $class->message("test 39");
   ok dir('', 'var', 'tmp') eq '/var/tmp', $class->message("test 40");
-  ok dir()->absolute eq dir(Cwd::cwd())->cleanup, $class->message("test 41");
+  ok dir()->absolute->resolve eq dir(Cwd::cwd())->resolve, $class->message("test 41");
   ok !defined dir(undef), $class->message("dir(undef)"); # added
 }
 

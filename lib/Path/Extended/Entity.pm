@@ -71,13 +71,17 @@ sub path {
 sub stringify { shift->path }
 
 sub is_dir      { shift->{is_dir} }
-sub is_open     { shift->{handle}      ? 1 : 0 }
-sub is_absolute { shift->{_absolute}   ? 1 : '' }
+sub is_open     { shift->{handle} ? 1 : 0 }
+sub is_absolute {
+  my $self = shift;
+  $self->{_absolute} && !$self->{_base} ? 1 : '';
+}
 
 sub resolve {
   my $self = shift;
   Carp::croak $! unless -e $self->{path};
   $self->{path} = $self->_unixify(Cwd::realpath($self->{path}));
+  $self->{_absolute} = File::Spec->file_name_is_absolute($self->{path});
   $self;
 }
 
@@ -100,7 +104,7 @@ sub _absolute {
 
 sub _relative {
   my $self = shift;
-  my $base = shift if @_ % 2;
+  my $base = @_ % 2 ? shift : undef;
   my %options = @_;
 
   $base ||= $options{base} || $self->{_base};
