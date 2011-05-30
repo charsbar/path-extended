@@ -74,6 +74,13 @@ sub is_dir      { shift->{is_dir} }
 sub is_open     { shift->{handle}      ? 1 : 0 }
 sub is_absolute { shift->{_absolute}   ? 1 : 0 }
 
+sub resolve {
+  my $self = shift;
+  Carp::croak $! unless -e $self->{path};
+  $self->{path} = $self->_unixify(Cwd::realpath($self->{path}));
+  $self;
+}
+
 sub absolute {
   my ($self, %options) = @_;
 
@@ -244,6 +251,10 @@ returns if the path you passed to the constructor was absolute or not (note that
 =head2 is_dir
 
 returns if the object represents directory or not.
+
+=head2 resolve
+
+does a physical cleanup of the path with L<Cwd::realpath>, that means, resolves a symbolic link if necessary. Note that this method may croak (when the path does not exist).
 
 =head2 copy_to
 
