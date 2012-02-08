@@ -1,5 +1,8 @@
 Revision history for Path-Extended
 
+0.20 to be released
+  - store $@ in a variable
+
 0.19 2011/05/31
   - added iomode (for slurp) and no_hidden (for children) options
     introduced in Path::Class 0.19
