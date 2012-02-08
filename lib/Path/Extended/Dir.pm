@@ -136,8 +136,8 @@ sub rmdir {
 
   if ( $self->exists ) {
     require File::Path;
-    eval { File::Path::rmtree( $self->_absolute ) };
-    do { $self->log( error => $@ ); return; } if $@;
+    eval { File::Path::rmtree( $self->_absolute ); 1 }
+      or do { my $err = $@; $self->log( error => $err ); return; };
   }
   $self;
 }
@@ -149,8 +149,8 @@ sub mkdir {
 
   unless ( $self->exists ) {
     require File::Path;
-    eval { File::Path::mkpath( $self->_absolute ) };
-    do { $self->log( error => $@ ); return; } if $@;
+    eval { File::Path::mkpath( $self->_absolute ); 1 }
+      or do { my $err = $@; $self->log( error => $err ); return; };
   }
   $self;
 }
