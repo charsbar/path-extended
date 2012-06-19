@@ -24,12 +24,16 @@ sub new_foreign {
   $class->new(@args);
 }
 
+# WoP : should be named stringify_absolute
+# $self->path will return absolute path 
 sub absolute {
   my $self = shift;
   $self->{_base} = undef;
   $self;
 }
 
+# WoP : should be named stringify_relative
+# $self->path will return relative path 
 sub relative {
   my $self = shift;
   my $base = @_ % 2 ? shift : undef;

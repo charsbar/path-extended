@@ -13,6 +13,7 @@ sub _initialize {
   $self->{_absolute} = 1; # always true for ::Extended::Dir
   $self->{is_dir}    = 1;
   $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );
+  $self->{path_passed_to_constructor} = $dir;
 
   $self;
 }

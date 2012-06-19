@@ -65,16 +65,38 @@ sub _unixify {
 
 sub _handle { shift->{handle} }
 
+# returns the string version of the path
 sub path {
   my $self = shift;
-  return ( $self->is_absolute ) ? $self->_absolute : $self->_relative;
+  return ( $self->_stringify_absolute ) ? $self->_absolute : $self->_relative;
 }
 
 sub stringify { shift->path }
 
 sub is_dir      { shift->{is_dir} }
 sub is_open     { shift->{handle} ? 1 : 0 }
+
+
 sub is_absolute {
+  my $self = shift;
+  return $self->is_absolute_wop;
+}
+
+# returns true if the internal representation of the path in $self->{path} is absolute
+# false if it is relative IF NO _base is set
+# IF _base is set always false it returned
+sub is_absolute_original {
+  my $self = shift;
+  $self->{_absolute} && !$self->{_base} ? 1 : '';
+}
+
+sub is_absolute_wop {
+  my $self = shift;
+  #$self->{_absolute} && !$self->{_base} ? 1 : '';
+  $self->{_absolute} ? 1 : '';
+}
+
+sub _stringify_absolute {
   my $self = shift;
   $self->{_absolute} && !$self->{_base} ? 1 : '';
 }
@@ -82,6 +104,9 @@ sub is_absolute {
 sub resolve {
   my $self = shift;
   Carp::croak $! unless -e $self->{path};
+  # WoP :
+  # Cwd::realpath returns the resolved absolute path
+  # calling File::Spec->file_name_is_absolute() not necessary
   $self->{path} = $self->_unixify(Cwd::realpath($self->{path}));
   $self->{_absolute} = File::Spec->file_name_is_absolute($self->{path});
   $self;

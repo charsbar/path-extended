@@ -13,6 +13,7 @@ sub constructor : Tests(4) {
 
   ok $file->path, $class->message('constructor contains the path');
 
+$DB::single=1;
   ok( File::Spec->file_name_is_absolute( $file->path ),
     $class->message('and the path is absolute'));
 

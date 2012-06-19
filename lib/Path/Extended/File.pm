@@ -13,6 +13,7 @@ sub _initialize {
   $self->{_absolute} = 1; # always true for ::Extended::File
   $self->{is_dir}    = 0;
   $self->{path}      = $self->_unixify( File::Spec->rel2abs($file) );
+  $self->{path_passed_to_constructor} = $self->_unixify($file);
 }
 
 sub basename {
