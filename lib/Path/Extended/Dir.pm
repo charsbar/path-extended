@@ -130,13 +130,13 @@ sub _find {
 }
 
 sub rmdir {
-  my $self = shift;
+  my ($self, @args) = @_;
 
   $self->close if $self->is_open;
 
   if ( $self->exists ) {
     require File::Path;
-    eval { File::Path::rmtree( $self->_absolute ); 1 }
+    eval { File::Path::rmtree( $self->_absolute, @args ); 1 }
       or do { my $err = $@; $self->log( error => $err ); return; };
   }
   $self;
