@@ -31,7 +31,7 @@ sub relative {
   my $self = shift;
   my $base = @_ % 2 ? shift : undef;
   my %options = @_;
-  $self->{_base} = $base || $options{$base} || File::Spec->curdir;
+  $self->{_base} = $base || $options{base} || File::Spec->curdir;
   $self;
 }
 
