@@ -10,10 +10,9 @@ sub _initialize {
 
   my $dir = @args ? File::Spec->catdir( @args ) : File::Spec->curdir;
 
-  $self->{_absolute} = 1; # always true for ::Extended::Dir
+  $self->{_stringify_absolute} = 1; # always true for ::Extended::Dir
   $self->{is_dir}    = 1;
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );
-  $self->{path_passed_to_constructor} = $dir;
+  $self->_set_path($dir);
 
   $self;
 }

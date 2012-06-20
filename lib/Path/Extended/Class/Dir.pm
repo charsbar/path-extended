@@ -11,10 +11,9 @@ sub _initialize {
 
   my $dir = @args ? File::Spec->catdir( @args ) : File::Spec->curdir;
 
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );
+  $self->_set_path($dir);
   $self->{is_dir}    = 1;
   $self->{_compat}   = 1;
-  $self->{_absolute} = File::Spec->file_name_is_absolute( $dir );
 
   $self;
 }
@@ -24,16 +23,12 @@ sub new_foreign {
   $class->new(@args);
 }
 
-# WoP : should be named stringify_absolute
-# $self->path will return absolute path 
 sub absolute {
   my $self = shift;
   $self->{_base} = undef;
   $self;
 }
 
-# WoP : should be named stringify_relative
-# $self->path will return relative path 
 sub relative {
   my $self = shift;
   my $base = @_ % 2 ? shift : undef;
