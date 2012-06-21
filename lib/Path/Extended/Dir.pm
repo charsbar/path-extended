@@ -10,9 +10,9 @@ sub _initialize {
 
   my $dir = @args ? File::Spec->catdir( @args ) : File::Spec->curdir;
 
-  $self->{_absolute} = 1; # always true for ::Extended::Dir
+  $self->{_stringify_absolute} = 1; # always true for ::Extended::Dir
   $self->{is_dir}    = 1;
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );
+  $self->_set_path($dir);
 
   $self;
 }
@@ -130,13 +130,13 @@ sub _find {
 }
 
 sub rmdir {
-  my $self = shift;
+  my ($self, @args) = @_;
 
   $self->close if $self->is_open;
 
   if ( $self->exists ) {
     require File::Path;
-    eval { File::Path::rmtree( $self->_absolute ); 1 }
+    eval { File::Path::rmtree( $self->_absolute, @args ); 1 }
       or do { my $err = $@; $self->log( error => $err ); return; };
   }
   $self;

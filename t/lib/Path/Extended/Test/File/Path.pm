@@ -21,6 +21,18 @@ sub constructor : Tests(4) {
   ok !$file->exists, $class->message('and the file does not exist');
 }
 
+sub input_path_is_absolute : Test(2) {
+  my $class = shift;
+
+  my $file_rel = file('a/relative/../path/to/file');
+
+  ok ( ! $file_rel->is_absolute, $class->message('input path is not absolute') );
+
+  my $file_abs = file('/is/an/absolute/path/to/file');
+
+  ok ( $file_abs->is_absolute, $class->message('input path is absolute' ) );
+}
+
 sub forward_slashes : Test {
   my $class = shift;
 
