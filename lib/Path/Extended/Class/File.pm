@@ -8,10 +8,9 @@ sub _initialize {
   my ($self, @args) = @_;
 
   my $file = File::Spec->catfile( @args );
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($file) );
+  $self->_set_path($file);
   $self->{is_dir}    = 0;
   $self->{_compat}   = 1;
-  $self->{_absolute} = File::Spec->file_name_is_absolute( $file );
 
   $self;
 }

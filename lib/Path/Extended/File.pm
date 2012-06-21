@@ -10,15 +10,15 @@ sub _initialize {
   my ($self, @args) = @_;
 
   my $file = File::Spec->catfile( @args );
-  $self->{_absolute} = 1; # always true for ::Extended::File
+  $self->{_stringify_absolute} = 1; # always true for ::Extended::File
   $self->{is_dir}    = 0;
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($file) );
+  $self->_set_path($file);
 }
 
 sub basename {
   my $self = shift;
   require File::Basename;
-  return File::Basename::basename( $self->{path} );
+  return File::Basename::basename( $self->{abs_path} );
 }
 
 sub open {
@@ -34,7 +34,7 @@ sub open {
       or do { $self->log( error => $! ); return; };
   }
   else {
-    open $fh, IO::Handle::_open_mode_string($mode), $self->{path}
+    open $fh, IO::Handle::_open_mode_string($mode), $self->{abs_path}
       or do { $self->log( error => $! ); return; };
   }
 
@@ -155,7 +155,7 @@ sub slurp {
   my $iomode = $options->{iomode} || 'r';
   $self->open($iomode);
   unless ( $self->is_open ) {
-    $self->log( warn => "Can't read", $self->{path}, $! );
+    $self->log( warn => "Can't read", $self->{abs_path}, $! );
     return;
   }
 
@@ -232,7 +232,7 @@ sub save {
 
   if ( $options->{lock} ) {
     unless ( $self->lock_ex ) {
-      $self->log( warn => "Can't lock", $self->{path}, $! );
+      $self->log( warn => "Can't lock", $self->{abs_path}, $! );
       return;
     }
   }
@@ -280,7 +280,7 @@ sub touch {
   $self;
 }
 
-sub size { return -s ( $_[0]->{handle} || $_[0]->{path} ) }
+sub size { return -s ( $_[0]->{handle} || $_[0]->{abs_path} ) }
 
 sub mtime {
   my $self = shift;

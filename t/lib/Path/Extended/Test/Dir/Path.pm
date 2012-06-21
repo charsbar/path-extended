@@ -21,6 +21,18 @@ sub constructor : Tests(4) {
   ok !$dir->exists, $class->message('and the dir does not exist');
 }
 
+sub input_path_is_absolute : Test(2) {
+  my $class = shift;
+
+  my $dir_rel = dir('a/relative/../path');
+
+  ok ( ! $dir_rel->is_absolute, $class->message('input path is not absolute') );
+
+  my $dir_abs = dir('/is/an/absolute/path');
+
+  ok ( $dir_abs->is_absolute, $class->message('input path is absolute' ) );
+}
+
 sub forward_slashes : Test {
   my $class = shift;
 

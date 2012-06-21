@@ -11,10 +11,9 @@ sub _initialize {
 
   my $dir = @args ? File::Spec->catdir( @args ) : File::Spec->curdir;
 
-  $self->{path}      = $self->_unixify( File::Spec->rel2abs($dir) );
+  $self->_set_path($dir);
   $self->{is_dir}    = 1;
   $self->{_compat}   = 1;
-  $self->{_absolute} = File::Spec->file_name_is_absolute( $dir );
 
   $self;
 }
