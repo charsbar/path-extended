@@ -17,7 +17,7 @@ WriteMakefile(
     'File::Find::Rule'      => 0,
     'File::Path'            => 0,
     'File::Spec'            => 3.23,
-    'File::stat'            => 0,
+    'File::stat'            => 1.0,
     'IO'                    => 1.23,
     'Log::Dump'             => 0,
     'Scalar::Util'          => 0,
