@@ -33,6 +33,15 @@ sub _class {
   return $class.'::'.($type eq 'file' ? 'File' : 'Dir');
 }
 
+sub _set_path {
+    my ($self, $path) = @_;
+    $self->{input_path} = $self->_unixify($path);
+    $self->{abs_path}   = $self->_unixify( File::Spec->rel2abs($path) );
+
+    # respect setting of _attribute when already done
+    $self->{_stringify_absolute} ||= File::Spec->file_name_is_absolute($path);
+}
+
 sub _related {
   my ($self, $type, @parts) = @_;
 
@@ -65,32 +74,43 @@ sub _unixify {
 
 sub _handle { shift->{handle} }
 
+sub _stringify_absolute {
+  my $self = shift;
+  $self->{_stringify_absolute} && !$self->{_base} ? 1 : '';
+}
+
+# returns the string version of the path
 sub path {
   my $self = shift;
-  return ( $self->is_absolute ) ? $self->_absolute : $self->_relative;
+  return ( $self->_stringify_absolute ) ? $self->_absolute : $self->_relative;
 }
 
 sub stringify { shift->path }
 
 sub is_dir      { shift->{is_dir} }
 sub is_open     { shift->{handle} ? 1 : 0 }
+
+
 sub is_absolute {
   my $self = shift;
-  $self->{_absolute} && !$self->{_base} ? 1 : '';
+  File::Spec->file_name_is_absolute($self->{input_path});
 }
 
 sub resolve {
   my $self = shift;
-  Carp::croak $! unless -e $self->{path};
-  $self->{path} = $self->_unixify(Cwd::realpath($self->{path}));
-  $self->{_absolute} = File::Spec->file_name_is_absolute($self->{path});
+  Carp::croak $! unless -e $self->{abs_path};
+  # WoP :
+  # Cwd::realpath returns the resolved absolute path
+  # calling File::Spec->file_name_is_absolute() not necessary
+  $self->{abs_path}  = $self->_unixify(Cwd::realpath($self->{abs_path}));
+  $self->{_stringify_absolute} = File::Spec->file_name_is_absolute($self->{abs_path});
   $self;
 }
 
 sub _absolute {
   my ($self, %options) = @_;
 
-  my $path = File::Spec->canonpath( $self->{path} );
+  my $path = File::Spec->canonpath( $self->{abs_path} );
   if ( $options{native} ) {
     return $path;
   }
@@ -111,7 +131,7 @@ sub _relative {
 
   $base ||= $options{base} || $self->{_base};
 
-  my $path = File::Spec->abs2rel( $self->{path}, $base );
+  my $path = File::Spec->abs2rel( $self->{abs_path}, $base );
      $path = $self->_unixify($path) unless $options{native};
 
   $path;
@@ -182,7 +202,7 @@ sub move_to {
   File::Copy::Recursive::rmove( $self->_absolute, $destination->_absolute )
     or do { $self->log( error =>  $! ); return; };
 
-  $self->{path} = $destination->_absolute;
+  $self->{abs_path} = $destination->_absolute;
 
   $self;
 }
@@ -203,7 +223,7 @@ sub rename_to {
   rename $self->_absolute => $destination->_absolute
     or do { $self->log( error => $! ); return; };
 
-  $self->{path} = $destination->_absolute;
+  $self->{abs_path} = $destination->_absolute;
 
   $self;
 }
@@ -212,14 +232,14 @@ sub stat {
   my $self = shift;
 
   require File::stat;
-  File::stat::stat( $self->{handle} || $self->{path} );
+  File::stat::stat( $self->{handle} || $self->{abs_path} );
 }
 
 sub lstat {
   my $self = shift;
 
   require File::stat;
-  File::stat::lstat( $self->{handle} || $self->{path} );
+  File::stat::lstat( $self->{handle} || $self->{abs_path} );
 }
 
 1;
