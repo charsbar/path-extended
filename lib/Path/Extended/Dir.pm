@@ -46,7 +46,7 @@ sub open {
   $self->close if $self->is_open;
 
   opendir my $dh, $self->_absolute
-    or do { $self->log( error => $! ); return; };
+    or do { $self->log( error => "Can't open $self: $!" ); return; };
 
   return $dh if $self->{_compat} && defined wantarray;
 

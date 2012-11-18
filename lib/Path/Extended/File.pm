@@ -31,11 +31,11 @@ sub open {
   my $fh;
   if ( $mode =~ /:/ ) {
     open $fh, $mode, $self->_absolute
-      or do { $self->log( error => $! ); return; };
+      or do { $self->log( error => "Can't open $self: $!" ); return; };
   }
   else {
     open $fh, IO::Handle::_open_mode_string($mode), $self->{abs_path}
-      or do { $self->log( error => $! ); return; };
+      or do { $self->log( error => "Can't open $self: $!" ); return; };
   }
 
   return $fh if $self->{_compat} && defined wantarray;
@@ -54,7 +54,7 @@ sub sysopen {
   $self->close if $self->is_open;
 
   CORE::sysopen my $fh, $self->_absolute, @_
-    or do { $self->log( error => $! ); return; };
+    or do { $self->log( error => "Can't open $self: $!" ); return; };
 
   $self->{handle} = $fh;
 

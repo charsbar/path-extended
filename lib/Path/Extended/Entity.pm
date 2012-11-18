@@ -98,7 +98,7 @@ sub is_absolute {
 
 sub resolve {
   my $self = shift;
-  Carp::croak $! unless -e $self->{abs_path};
+  Carp::croak "$self: $!" unless -e $self->{abs_path};
   # WoP :
   # Cwd::realpath returns the resolved absolute path
   # calling File::Spec->file_name_is_absolute() not necessary
@@ -180,7 +180,7 @@ sub copy_to {
 
   require File::Copy::Recursive;
   File::Copy::Recursive::rcopy( $self->_absolute, $destination->_absolute )
-    or do { $self->log( error =>  $! ); return; };
+    or do { $self->log( error => "Can't copy $self to $destination: $! ); return; };
 
   $self;
 }
@@ -200,7 +200,7 @@ sub move_to {
 
   require File::Copy::Recursive;
   File::Copy::Recursive::rmove( $self->_absolute, $destination->_absolute )
-    or do { $self->log( error =>  $! ); return; };
+    or do { $self->log( error => "Can't move $self to $destination: $!" ); return; };
 
   $self->{abs_path} = $destination->_absolute;
 
@@ -221,7 +221,7 @@ sub rename_to {
   $self->close if $self->is_open;
 
   rename $self->_absolute => $destination->_absolute
-    or do { $self->log( error => $! ); return; };
+    or do { $self->log( error => "Can't rename $self to $destination: $!" ); return; };
 
   $self->{abs_path} = $destination->_absolute;
 
