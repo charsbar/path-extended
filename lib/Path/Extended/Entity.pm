@@ -180,7 +180,7 @@ sub copy_to {
 
   require File::Copy::Recursive;
   File::Copy::Recursive::rcopy( $self->_absolute, $destination->_absolute )
-    or do { $self->log( error => "Can't copy $self to $destination: $! ); return; };
+    or do { $self->log( error => "Can't copy $self to $destination: $!" ); return; };
 
   $self;
 }
