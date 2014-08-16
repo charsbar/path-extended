@@ -1,5 +1,10 @@
 Revision history for Path-Extended
 
+0.21 2014/08/16
+  - no code changes
+  - dropped Test::Classy dependency
+  - cpanfile
+
 0.20 2012/06/22
   - ::Dir->is_absolute correctly returns if the path you passed to
     the constructor is absolute or not (fixed by Wolfgang Pecho;
