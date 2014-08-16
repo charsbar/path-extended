@@ -1,4 +1,5 @@
-package Path::Extended::Test::File;
+package #
+  Path::Extended::Test::File;
 
 use strict;
 use warnings;

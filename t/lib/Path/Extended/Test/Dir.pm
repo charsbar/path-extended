@@ -1,4 +1,5 @@
-package Path::Extended::Test::Dir;
+package #
+  Path::Extended::Test::Dir;
 
 use strict;
 use warnings;
