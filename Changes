@@ -1,5 +1,8 @@
 Revision history for Path-Extended
 
+0.23 2015/03/11
+  - let recurse() accept a single code reference as its argument
+
 0.22 2014/08/16
   - no code changes
   - dropped Test::Classy dependency
