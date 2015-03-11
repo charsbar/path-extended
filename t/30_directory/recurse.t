@@ -10,7 +10,7 @@ my $tmpdir = tempdir();
 
 subtest 'pm_files' => sub {
   my @found;
-  dir("$FindBin::Bin/../../lib")->recurse( callback => sub {
+  dir("$FindBin::Bin/../../lib")->recurse(sub {
     my $item = shift;
     return unless $item->basename =~ /\.pm$/;
 
