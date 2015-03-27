@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use ExtUtils::MakeMaker::CPANfile;
-use 5.006;
+use 5.008;
 
 WriteMakefile(
   NAME          => 'Path::Extended',
@@ -15,4 +15,5 @@ WriteMakefile(
     },
   },
   test => {RECURSIVE_TEST_FILES=>1},
+  MIN_PERL_VERSION => 5.008,
 );
