@@ -40,7 +40,7 @@ subtest 'fatal_log' => sub {
 };
 
 subtest 'logs_to_stderr' => sub {
-  eval { require Capture::Tiny0 } or do {
+  eval { require Capture::Tiny } or do {
     SKIP: { skip 'this test requires Capture::Tiny', 1; fail; };
     return;
   };
